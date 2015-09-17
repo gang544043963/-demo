@@ -345,6 +345,10 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
 }
 
 
+
+
+//
+
 - (void) pickerCollectionViewDidSelected:(ZLPhotoPickerCollectionView *) pickerCollectionView deleteAsset:(ZLPhotoAssets *)deleteAssets{
     
     if (self.selectPickerAssets.count == 0){
