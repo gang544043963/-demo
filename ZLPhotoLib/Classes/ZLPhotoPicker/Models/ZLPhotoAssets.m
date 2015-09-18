@@ -8,7 +8,7 @@
 
 #import "ZLPhotoAssets.h"
 
-static CGFloat saveOriginImageRadio = 0.0001;
+//static CGFloat saveOriginImageRadio = 0.0001;
 
 @implementation ZLPhotoAssets
 

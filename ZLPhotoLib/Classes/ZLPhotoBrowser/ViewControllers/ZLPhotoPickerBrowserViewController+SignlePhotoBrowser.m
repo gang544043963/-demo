@@ -10,8 +10,7 @@
 
 @implementation ZLPhotoPickerBrowserViewController (SignlePhotoBrowser)
 #pragma mark - showHeadPortrait 放大缩小一张图片的情况下（查看头像）
-- (void)showHeadPortrait:(UIImageView *)toImageView{
-    [self showHeadPortrait:toImageView originUrl:nil];
+- (void)showHeadPortrait:(UIImageView *)toImageView{    [self showHeadPortrait:toImageView originUrl:nil];
 }
 
 - (void)showHeadPortrait:(UIImageView *)toImageView originUrl:(NSString *)originUrl{

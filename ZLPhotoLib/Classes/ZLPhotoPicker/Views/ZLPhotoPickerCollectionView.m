@@ -81,11 +81,11 @@
 /**
  *  每个cell右上角的选择按钮
  */
-- (void)installTickButtonOnCell:(ZLPhotoPickerCollectionViewCell *)cell
+- (void)setupTickButtonOnCell:(ZLPhotoPickerCollectionViewCell *)cell
                         AtIndex:(NSIndexPath *)indexPath
 {
     UIButton *tickButton = [[UIButton alloc] init];
-    tickButton.frame = CGRectMake(cell.frame.size.width - 28, 5, 21, 21);
+    tickButton.frame = CGRectMake(cell.frame.size.width - 30, 0, 30, 30);
     [tickButton setBackgroundColor:[UIColor clearColor]];
     //runtime 关联对象
     objc_setAssociatedObject(tickButton, @"tickBtn", indexPath, OBJC_ASSOCIATION_ASSIGN);
@@ -189,7 +189,7 @@
         }
         
         [cell.contentView addSubview:cellImgView];
-        [self installTickButtonOnCell:cell AtIndex:indexPath];
+        [self setupTickButtonOnCell:cell AtIndex:indexPath];
         
         cellImgView.maskViewFlag = ([self.selectsIndexPath containsObject:@(indexPath.row)]);
         

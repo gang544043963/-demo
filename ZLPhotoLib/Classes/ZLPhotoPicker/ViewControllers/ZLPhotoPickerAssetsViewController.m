@@ -128,7 +128,9 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
     // 当前选中的值
     pickerBrowser.currentIndexPath = [NSIndexPath indexPathForRow:indexPath.row inSection:0];
     // 展示控制器
-    [self presentViewController:pickerBrowser animated:NO completion:nil];
+    [pickerBrowser showPushPickerVc:self];
+//    [self.navigationController pushViewController:pickerBrowser animated:NO];
+//    [self presentViewController:pickerBrowser animated:NO completion:nil];
     
 }
 
