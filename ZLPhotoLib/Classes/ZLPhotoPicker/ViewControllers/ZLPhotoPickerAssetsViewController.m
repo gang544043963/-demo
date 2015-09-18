@@ -41,6 +41,9 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
 @property (nonatomic , strong) NSMutableArray *selectAssets;
 // 拍照后的图片数组
 @property (strong,nonatomic) NSMutableArray *takePhotoImages;
+// 1 - 相册浏览器的数据源是 selectAssets， 0 - 相册浏览器的数据源是 assets
+@property (nonatomic, assign) BOOL isPreview;
+
 @end
 
 @implementation ZLPhotoPickerAssetsViewController
@@ -98,10 +101,20 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
 {
     NSLog(@"预览");
     
-    [self setupPhotoBrowser];
+    [self setupPhotoBrowserInCasePreview:YES CurrentIndexPath:0];
 }
 
-- (void) setupPhotoBrowser {
+/**
+ *  跳转照片浏览器
+ *
+ *  @param preview YES - 从‘预览’按钮进去，浏览器显示的时被选中的照片
+ *                  NO - 点击cell进去，浏览器显示所有照片
+ *  @param CurrentIndexPath 进入浏览器后展示图片的位置
+ */
+- (void) setupPhotoBrowserInCasePreview:(BOOL)preview
+                       CurrentIndexPath:(NSIndexPath *)indexPath{
+    
+    self.isPreview = preview;
     // 图片游览器
     ZLPhotoPickerBrowserViewController *pickerBrowser = [[ZLPhotoPickerBrowserViewController alloc] init];
     // 动画方式
@@ -111,11 +124,12 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
     // 数据源可以不传，传photos数组 photos<里面是ZLPhotoPickerBrowserPhoto>
 //    pickerBrowser.photos = self.selectAssets;
     // 是否可以删除照片
-    pickerBrowser.editing = YES;
+    pickerBrowser.editing = NO;
     // 当前选中的值
-    pickerBrowser.currentIndexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+    pickerBrowser.currentIndexPath = [NSIndexPath indexPathForRow:indexPath.row inSection:0];
     // 展示控制器
     [self presentViewController:pickerBrowser animated:NO completion:nil];
+    
 }
 
 - (void)setSelectPickerAssets:(NSArray *)selectPickerAssets{
@@ -252,8 +266,8 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
             zlAsset.asset = asset;
             [assetsM addObject:zlAsset];
         }];
-
         weakSelf.collectionView.dataArray = assetsM;
+        [self.assets setArray:assetsM];
     }];
     
 }
@@ -344,11 +358,15 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
     [self setupAssets];
 }
 
+#pragma mark - ZLPhotoPickerCollectionViewDelegate
 
+//cell被点击会调用
+- (void) pickerCollectionCellTouchedIndexPath:(NSIndexPath *)indexPath
+{
+    [self setupPhotoBrowserInCasePreview:NO CurrentIndexPath:indexPath];
+}
 
-
-//
-
+//cell的右上角选择框被点击会调用
 - (void) pickerCollectionViewDidSelected:(ZLPhotoPickerCollectionView *) pickerCollectionView deleteAsset:(ZLPhotoAssets *)deleteAssets{
     
     if (self.selectPickerAssets.count == 0){
@@ -443,14 +461,22 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
 }
 
 - (NSInteger)photoBrowser:(ZLPhotoPickerBrowserViewController *)photoBrowser numberOfItemsInSection:(NSUInteger)section{
-    return self.selectAssets.count;
+    if (self.isPreview) {
+        return self.selectAssets.count;
+    } else {
+        return self.assets.count;
+    }
 }
-
 
 - (ZLPhotoPickerBrowserPhoto *)photoBrowser:(ZLPhotoPickerBrowserViewController *)pickerBrowser photoAtIndexPath:(NSIndexPath *)indexPath
 {
     
-    ZLPhotoAssets *imageObj = [self.selectAssets objectAtIndex:indexPath.row];
+    ZLPhotoAssets *imageObj = [[ZLPhotoAssets alloc] init];
+    if (self.isPreview && self.selectAssets.count) {
+        imageObj = [self.selectAssets objectAtIndex:indexPath.row];
+    } else if (!self.isPreview && self.assets.count){
+        imageObj = [self.assets objectAtIndex:indexPath.row];
+    }
     // 包装下imageObj 成 ZLPhotoPickerBrowserPhoto 传给数据源
     ZLPhotoPickerBrowserPhoto *photo = [ZLPhotoPickerBrowserPhoto photoAnyImageObjWith:imageObj];
     photo.toView = [[UIImageView alloc] initWithImage:[imageObj thumbImage]];
@@ -504,6 +530,8 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
 - (void)dealloc{
     // 赋值给上一个控制器
     self.groupVc.selectAsstes = self.selectAssets;
+    self.assets = nil;
+    self.selectAssets = nil;
 }
 
 @end

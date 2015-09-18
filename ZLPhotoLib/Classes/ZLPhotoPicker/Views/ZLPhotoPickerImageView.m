@@ -11,9 +11,9 @@
 
 @interface ZLPhotoPickerImageView ()
 
-@property (nonatomic , weak) UIView *maskView;
-@property (nonatomic , weak) UIImageView *tickImageView;
-@property (nonatomic , weak) UIImageView *videoView;
+@property (nonatomic, weak) UIView *maskView;
+@property (nonatomic, weak) UIImageView *tickImageView;
+@property (nonatomic, weak) UIImageView *videoView;
 
 @end
 

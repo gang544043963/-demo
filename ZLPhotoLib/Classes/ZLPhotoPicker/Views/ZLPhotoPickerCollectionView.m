@@ -14,6 +14,7 @@
 #import "ZLPhotoAssets.h"
 #import "ZLPhoto.h"
 #import "UIImage+ZLPhotoLib.h"
+#import <objc/runtime.h>
 
 @interface ZLPhotoPickerCollectionView () <UICollectionViewDataSource,UICollectionViewDelegate>
 
@@ -21,6 +22,9 @@
 
 // 判断是否是第一次加载
 @property (nonatomic , assign , getter=isFirstLoadding) BOOL firstLoadding;
+
+//每个cell右上角的选择按钮
+//@property (nonatomic, weak) UIButton *tickButton;
 
 @end
 
@@ -74,6 +78,77 @@
     }
     return self;
 }
+/**
+ *  每个cell右上角的选择按钮
+ */
+- (void)installTickButtonOnCell:(ZLPhotoPickerCollectionViewCell *)cell
+                        AtIndex:(NSIndexPath *)indexPath
+{
+    UIButton *tickButton = [[UIButton alloc] init];
+    tickButton.frame = CGRectMake(cell.frame.size.width - 28, 5, 21, 21);
+    [tickButton setBackgroundColor:[UIColor clearColor]];
+    //runtime 关联对象
+    objc_setAssociatedObject(tickButton, @"tickBtn", indexPath, OBJC_ASSOCIATION_ASSIGN);
+    [tickButton addTarget:self action:@selector(tickBtnTouhced:) forControlEvents:UIControlEventTouchUpInside];
+    [cell.contentView addSubview:tickButton];
+}
+
+- (void)tickBtnTouhced:(UIButton *)btn
+{
+    //runtime 获取关联的对象
+    NSIndexPath * indexPath = objc_getAssociatedObject(btn, @"tickBtn");
+    NSLog(@"tickBtnTouhced----%d",indexPath.item);
+    
+    if (self.topShowPhotoPicker && indexPath.row == 0) {
+        if ([self.collectionViewDelegate respondsToSelector:@selector(pickerCollectionViewDidCameraSelect:)]) {
+            [self.collectionViewDelegate pickerCollectionViewDidCameraSelect:self];
+        }
+        return ;
+    }
+    
+    if (!self.lastDataArray) {
+        self.lastDataArray = [NSMutableArray array];
+    }
+    
+    ZLPhotoPickerCollectionViewCell *cell = (ZLPhotoPickerCollectionViewCell *) [self cellForItemAtIndexPath:indexPath];
+    
+    ZLPhotoAssets *asset = self.dataArray[indexPath.item];
+    ZLPhotoPickerImageView *pickerImageView = [cell.contentView.subviews objectAtIndex:(cell.contentView.subviews.count - 2)];
+    // 如果没有就添加到数组里面，存在就移除
+    if (pickerImageView.isMaskViewFlag) {
+        [self.selectsIndexPath removeObject:@(indexPath.item)];
+        [self.selectAssets removeObject:asset];
+        [self.lastDataArray removeObject:asset];
+    }else{
+        // 1 判断图片数超过最大数或者小于0
+        NSUInteger maxCount = (self.maxCount < 0) ? KPhotoShowMaxCount :  self.maxCount;
+        
+        if (self.selectAssets.count >= maxCount) {
+            NSString *format = [NSString stringWithFormat:@"最多只能选择%zd张图片",maxCount];
+            if (maxCount == 0) {
+                format = [NSString stringWithFormat:@"您已经选满了图片呦."];
+            }
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"提醒" message:format delegate:self cancelButtonTitle:nil otherButtonTitles:@"好的", nil];
+            [alertView show];
+            return ;
+        }
+        
+        [self.selectsIndexPath addObject:@(indexPath.item)];
+        [self.selectAssets addObject:asset];
+        [self.lastDataArray addObject:asset];
+    }
+    // 告诉代理现在被点击了!
+    if ([self.collectionViewDelegate respondsToSelector:@selector(pickerCollectionViewDidSelected: deleteAsset:)]) {
+        if (pickerImageView.isMaskViewFlag) {
+            // 删除的情况下
+            [self.collectionViewDelegate pickerCollectionViewDidSelected:self deleteAsset:asset];
+        }else{
+            [self.collectionViewDelegate pickerCollectionViewDidSelected:self deleteAsset:nil];
+        }
+    }
+    
+    pickerImageView.maskViewFlag = ([pickerImageView isKindOfClass:[ZLPhotoPickerImageView class]]) && !pickerImageView.isMaskViewFlag;
+}
 
 #pragma mark -<UICollectionViewDataSource>
 - (NSInteger) numberOfSectionsInCollectionView:(UICollectionView *)collectionView{
@@ -114,6 +189,7 @@
         }
         
         [cell.contentView addSubview:cellImgView];
+        [self installTickButtonOnCell:cell AtIndex:indexPath];
         
         cellImgView.maskViewFlag = ([self.selectsIndexPath containsObject:@(indexPath.row)]);
         
@@ -129,58 +205,62 @@
 
 #pragma mark - <UICollectionViewDelegate>
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
+    
+    NSLog(@"cell被点击");
+    if ([self.collectionViewDelegate respondsToSelector:@selector(pickerCollectionCellTouchedIndexPath:)]) {
+        [self.collectionViewDelegate pickerCollectionCellTouchedIndexPath:indexPath];
+    }
 
-    if (self.topShowPhotoPicker && indexPath.item == 0) {
-        if ([self.collectionViewDelegate respondsToSelector:@selector(pickerCollectionViewDidCameraSelect:)]) {
-            [self.collectionViewDelegate pickerCollectionViewDidCameraSelect:self];
-        }
-        return ;
-    }
-    
-    if (!self.lastDataArray) {
-        self.lastDataArray = [NSMutableArray array];
-    }
-    
-    ZLPhotoPickerCollectionViewCell *cell = (ZLPhotoPickerCollectionViewCell *) [collectionView cellForItemAtIndexPath:indexPath];
-    
-    ZLPhotoAssets *asset = self.dataArray[indexPath.row];
-    ZLPhotoPickerImageView *pickerImageView = [cell.contentView.subviews lastObject];
-    // 如果没有就添加到数组里面，存在就移除
-    if (pickerImageView.isMaskViewFlag) {
-        [self.selectsIndexPath removeObject:@(indexPath.row)];
-        [self.selectAssets removeObject:asset];
-        [self.lastDataArray removeObject:asset];
-    }else{
-        // 1 判断图片数超过最大数或者小于0
-        NSUInteger maxCount = (self.maxCount < 0) ? KPhotoShowMaxCount :  self.maxCount;
-        
-        if (self.selectAssets.count >= maxCount) {
-            NSString *format = [NSString stringWithFormat:@"最多只能选择%zd张图片",maxCount];
-            if (maxCount == 0) {
-                format = [NSString stringWithFormat:@"您已经选满了图片呦."];
-            }
-            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"提醒" message:format delegate:self cancelButtonTitle:nil otherButtonTitles:@"好的", nil];
-            [alertView show];
-            return ;
-        }
-        
-        [self.selectsIndexPath addObject:@(indexPath.row)];
-        [self.selectAssets addObject:asset];
-        [self.lastDataArray addObject:asset];
-    }
-    // 告诉代理现在被点击了!
-    if ([self.collectionViewDelegate respondsToSelector:@selector(pickerCollectionViewDidSelected: deleteAsset:)]) {
-        if (pickerImageView.isMaskViewFlag) {
-            // 删除的情况下
-            [self.collectionViewDelegate pickerCollectionViewDidSelected:self deleteAsset:asset];
-        }else{
-            [self.collectionViewDelegate pickerCollectionViewDidSelected:self deleteAsset:nil];
-        }
-    }
-    
-    pickerImageView.maskViewFlag = ([pickerImageView isKindOfClass:[ZLPhotoPickerImageView class]]) && !pickerImageView.isMaskViewFlag;
-    
-    
+//    if (self.topShowPhotoPicker && indexPath.item == 0) {
+//        if ([self.collectionViewDelegate respondsToSelector:@selector(pickerCollectionViewDidCameraSelect:)]) {
+//            [self.collectionViewDelegate pickerCollectionViewDidCameraSelect:self];
+//        }
+//        return ;
+//    }
+//    
+//    if (!self.lastDataArray) {
+//        self.lastDataArray = [NSMutableArray array];
+//    }
+//    
+//    ZLPhotoPickerCollectionViewCell *cell = (ZLPhotoPickerCollectionViewCell *) [collectionView cellForItemAtIndexPath:indexPath];
+//    
+//    ZLPhotoAssets *asset = self.dataArray[indexPath.row];
+//    ZLPhotoPickerImageView *pickerImageView = [cell.contentView.subviews lastObject];
+//    // 如果没有就添加到数组里面，存在就移除
+//    if (pickerImageView.isMaskViewFlag) {
+//        [self.selectsIndexPath removeObject:@(indexPath.row)];
+//        [self.selectAssets removeObject:asset];
+//        [self.lastDataArray removeObject:asset];
+//    }else{
+//        // 1 判断图片数超过最大数或者小于0
+//        NSUInteger maxCount = (self.maxCount < 0) ? KPhotoShowMaxCount :  self.maxCount;
+//        
+//        if (self.selectAssets.count >= maxCount) {
+//            NSString *format = [NSString stringWithFormat:@"最多只能选择%zd张图片",maxCount];
+//            if (maxCount == 0) {
+//                format = [NSString stringWithFormat:@"您已经选满了图片呦."];
+//            }
+//            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"提醒" message:format delegate:self cancelButtonTitle:nil otherButtonTitles:@"好的", nil];
+//            [alertView show];
+//            return ;
+//        }
+//        
+//        [self.selectsIndexPath addObject:@(indexPath.row)];
+//        [self.selectAssets addObject:asset];
+//        [self.lastDataArray addObject:asset];
+//    }
+//    // 告诉代理现在被点击了!
+//    if ([self.collectionViewDelegate respondsToSelector:@selector(pickerCollectionViewDidSelected: deleteAsset:)]) {
+//        if (pickerImageView.isMaskViewFlag) {
+//            // 删除的情况下
+//            [self.collectionViewDelegate pickerCollectionViewDidSelected:self deleteAsset:asset];
+//        }else{
+//            [self.collectionViewDelegate pickerCollectionViewDidSelected:self deleteAsset:nil];
+//        }
+//    }
+//    
+//    pickerImageView.maskViewFlag = ([pickerImageView isKindOfClass:[ZLPhotoPickerImageView class]]) && !pickerImageView.isMaskViewFlag;
+
 }
 
 #pragma mark 底部View

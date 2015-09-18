@@ -384,6 +384,9 @@ static NSString *_cellIdentifier = @"collectionViewCell";
 
 - (void)dealloc{
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    self.delegate = nil;
+    self.dataSource = nil;
+    self.photos = nil;
 }
 
 - (void)viewDidLoad {
