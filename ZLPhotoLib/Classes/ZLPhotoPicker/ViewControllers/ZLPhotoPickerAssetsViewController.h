@@ -15,8 +15,6 @@
 
 @interface ZLPhotoPickerAssetsViewController : UIViewController
 
-@property (weak,nonatomic) ZLPhotoPickerGroupViewController *groupVc;
-
 @property (nonatomic , assign) PickerViewShowStatus status;
 //决定以什么风格显示相册，有原图选择按钮？有多选功能？
 @property (nonatomic) XGShowImageType showType;
