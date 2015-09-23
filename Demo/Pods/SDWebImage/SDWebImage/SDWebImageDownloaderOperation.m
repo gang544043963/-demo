@@ -184,7 +184,6 @@ NSString *const SDWebImageDownloadFinishNotification = @"SDWebImageDownloadFinis
     [self reset];
 }
 
-
 - (void)reset {
     self.cancelBlock = nil;
     self.completedBlock = nil;

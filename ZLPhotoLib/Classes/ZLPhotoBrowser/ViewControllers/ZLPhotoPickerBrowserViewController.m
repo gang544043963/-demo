@@ -35,6 +35,15 @@ static NSString *_cellIdentifier = @"collectionViewCell";
 
 @implementation ZLPhotoPickerBrowserViewController
 
+#pragma mark - dealloc
+
+- (void)dealloc{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    self.delegate = nil;
+    self.dataSource = nil;
+//    self.photos = nil;
+}
+
 #pragma mark - getter
 #pragma mark photos
 - (NSArray *)photos{
@@ -382,17 +391,11 @@ static NSString *_cellIdentifier = @"collectionViewCell";
     }];
 }
 
-- (void)dealloc{
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-    self.delegate = nil;
-    self.dataSource = nil;
-    self.photos = nil;
-}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.view.backgroundColor = [UIColor blackColor];
+    self.view.backgroundColor = [UIColor whiteColor];
     [[UIApplication sharedApplication] setStatusBarHidden:YES];
 }
 

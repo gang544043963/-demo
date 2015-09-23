@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ZLPhotoPickerCommon.h"
 // 回调
-typedef void(^callBackBlock)(id obj);
+typedef void(^ZLcallBackBlock)(id obj);
 @class ZLPhotoPickerViewController;
 // 状态组
 typedef NS_ENUM(NSInteger , PickerViewShowStatus) {
@@ -23,7 +24,7 @@ typedef NS_ENUM(NSInteger , PickerViewShowStatus) {
 /**
  *  返回所有的Asstes对象
  */
-- (void)pickerViewControllerDoneAsstes:(NSArray *)assets;
+- (void)pickerViewControllerDoneAsstes:(NSArray *)assets isOriginal:(BOOL)original;
 /**
  *  点击拍照
  */
@@ -37,8 +38,10 @@ typedef NS_ENUM(NSInteger , PickerViewShowStatus) {
 @property (nonatomic , weak) id<ZLPhotoPickerViewControllerDelegate>delegate;
 // 决定你是否需要push到内容控制器, 默认显示组
 @property (nonatomic , assign) PickerViewShowStatus status;
+// 决定以什么风格显示相册，有原图选择按钮？有多选功能？
+@property (nonatomic) XGShowImageType showType;
 // 可以用代理来返回值或者用block来返回值
-@property (nonatomic , copy) callBackBlock callBack;
+@property (nonatomic , copy) ZLcallBackBlock callBack;
 // 每次选择图片的最小数, 默认与最大数是9
 @property (nonatomic , assign) NSInteger maxCount;
 // 记录选中的值
@@ -47,6 +50,7 @@ typedef NS_ENUM(NSInteger , PickerViewShowStatus) {
 @property (assign,nonatomic) BOOL topShowPhotoPicker;
 
 // @function
+- (instancetype)initWithShowType:(XGShowImageType)showType;
 // 展示控制器
 - (void)showPickerVc:(UIViewController *)vc;
 

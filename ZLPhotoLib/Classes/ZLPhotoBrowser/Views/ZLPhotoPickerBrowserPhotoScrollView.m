@@ -11,7 +11,8 @@
 #import "DACircularProgressView.h"
 #import "ZLPhotoPickerCommon.h"
 #import "ZLPhotoRect.h"
-#import <SDWebImage/UIImageView+WebCache.h>
+//#import <SDWebImage/UIImageView+WebCache.h>
+#import "UIImageView+WebCache.h"
 
 // Private methods and properties
 @interface ZLPhotoPickerBrowserPhotoScrollView ()<UIActionSheetDelegate> {

@@ -10,13 +10,26 @@
 #import "ZLPhoto.h"
 
 @interface ZLPhotoPickerViewController ()
+
 @property (nonatomic , weak) ZLPhotoPickerGroupViewController *groupVc;
+//是否发送原图，1 原图 0 压缩过图
+@property (nonatomic, assign) BOOL isOriginal;
+
 @end
 
 @implementation ZLPhotoPickerViewController
 
+- (instancetype)initWithShowType:(XGShowImageType)showType{
+    self = [super init];
+    if (self) {
+        self.showType = showType;
+    }
+    return self;
+}
+
 #pragma mark - Life cycle
 - (void)viewDidLoad {
+    
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
     [self addNotification];
@@ -28,7 +41,7 @@
 
 #pragma mark - init Action
 - (void) createNavigationController{
-    ZLPhotoPickerGroupViewController *groupVc = [[ZLPhotoPickerGroupViewController alloc] init];
+    ZLPhotoPickerGroupViewController *groupVc = [[ZLPhotoPickerGroupViewController alloc] initWithShowType:self.showType];
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:groupVc];
     nav.view.frame = self.view.bounds;
     [self addChildViewController:nav];
@@ -97,8 +110,8 @@
 - (void)done:(NSNotification *)note{
     NSArray *selectArray =  note.userInfo[@"selectAssets"];
     dispatch_async(dispatch_get_main_queue(), ^{
-        if ([self.delegate respondsToSelector:@selector(pickerViewControllerDoneAsstes:)]) {
-            [self.delegate pickerViewControllerDoneAsstes:selectArray];
+        if ([self.delegate respondsToSelector:@selector(pickerViewControllerDoneAsstes:isOriginal:)]) {
+            [self.delegate pickerViewControllerDoneAsstes:selectArray  isOriginal:self.isOriginal];
         }else if (self.callBack){
             self.callBack(selectArray);
         }

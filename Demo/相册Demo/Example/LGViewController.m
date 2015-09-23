@@ -9,21 +9,22 @@
 #import "LGViewController.h"
 #import "Example1TableViewCell.h"
 #import "ZLPhoto.h"
+#import "ZLPhotoAssets.h"
 #import <SDWebImage/UIImageView+WebCache.h>
 
 @interface LGViewController ()<ZLPhotoPickerViewControllerDelegate>
 
-@property (nonatomic , strong) NSMutableArray *assets;
+@property (nonatomic , strong) NSMutableArray *selectedAssets;
 
 @end
 
 @implementation LGViewController
 
-- (NSMutableArray *)assets{
-    if (!_assets) {
-        _assets = [NSMutableArray array];
+- (NSMutableArray *)selectedAssets{
+    if (!_selectedAssets) {
+        _selectedAssets = [NSMutableArray array];
     }
-    return _assets;
+    return _selectedAssets;
 }
 
 - (void)viewDidLoad {
@@ -46,7 +47,7 @@
     ZLPhotoPickerViewController *pickerVc = [[ZLPhotoPickerViewController alloc] init];
     // 默认显示相册里面的内容SavePhotos
     pickerVc.status = PickerViewShowStatusCameraRoll;
-    pickerVc.selectPickers = self.assets;
+    pickerVc.selectPickers = self.selectedAssets;
     // 最多能选9张图片
     pickerVc.maxCount = 9;
     pickerVc.delegate = self;
@@ -56,8 +57,12 @@
 #pragma mark - ZLPhotoPickerViewControllerDelegate
 - (void)pickerViewControllerDoneAsstes:(NSArray *)assets
 {
-    [self.assets arrayByAddingObjectsFromArray:assets];
+
 }
 
+- (void)viewDidDisappear:(BOOL)animated
+{
+    
+}
 
 @end

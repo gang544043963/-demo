@@ -13,10 +13,15 @@
 
 @property (nonatomic , weak) id<ZLPhotoPickerViewControllerDelegate> delegate;
 @property (nonatomic , assign) PickerViewShowStatus status;
+// 从ZLPhotoPickerViewController传递过来，需要传递到ZLPhotoPickerAssetsViewController中去
+@property (nonatomic) XGShowImageType showType;
+
 @property (nonatomic , assign) NSInteger maxCount;
 // 记录选中的值
 @property (strong,nonatomic) NSArray *selectAsstes;
 // 置顶展示图片
 @property (assign,nonatomic) BOOL topShowPhotoPicker;
+
+- (instancetype)initWithShowType:(XGShowImageType)showType;
 
 @end

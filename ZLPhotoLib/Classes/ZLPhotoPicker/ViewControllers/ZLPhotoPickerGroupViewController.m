@@ -31,6 +31,22 @@
 
 @implementation ZLPhotoPickerGroupViewController
 
+#pragma mark - dealloc
+
+- (void)dealloc
+{
+    self.tableView.delegate = nil;
+    self.tableView.dataSource = nil;
+}
+
+- (instancetype)initWithShowType:(XGShowImageType)showType{
+    self = [super init];
+    if (self) {
+        self.showType = showType;
+    }
+    return self;
+}
+
 - (UITableView *)tableView{
     if (!_tableView) {
         UITableView *tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
@@ -52,6 +68,7 @@
 }
 
 - (void)viewDidLoad {
+    NSLog(@"viewDidLoad-start");
     [super viewDidLoad];
     
     self.title = @"选择相册";
@@ -79,7 +96,10 @@
         // 获取图片
         [self getImgs];
     }
+    
+    NSLog(@"viewDidLoad-end");
 }
+
 
 - (void) setupButtons{
     UIBarButtonItem *barItem = [[UIBarButtonItem alloc] initWithTitle:@"关闭" style:UIBarButtonItemStyleDone target:self action:@selector(back)];
@@ -123,7 +143,11 @@
     
     if (!gp) return ;
     
-    ZLPhotoPickerAssetsViewController *assetsVc = [[ZLPhotoPickerAssetsViewController alloc] init];
+    ZLPhotoPickerAssetsViewController *assetsVc = [[ZLPhotoPickerAssetsViewController alloc] initWithShowType:self.showType];
+    assetsVc.selectedAssetsBlock = ^(NSArray *selectedAssets){
+        //回传选择的照片，实现选择记忆
+        self.selectAsstes = selectedAssets;
+    };
     assetsVc.selectPickerAssets = self.selectAsstes;
     assetsVc.assetsGroup = gp;
     assetsVc.topShowPhotoPicker = self.topShowPhotoPicker;
@@ -138,7 +162,6 @@
 }
 
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     ZLPhotoPickerGroup *group = self.groups[indexPath.row];
     ZLPhotoPickerAssetsViewController *assetsVc = [[ZLPhotoPickerAssetsViewController alloc] init];
@@ -147,7 +170,7 @@
     assetsVc.assetsGroup = group;
     assetsVc.topShowPhotoPicker = self.topShowPhotoPicker;
     assetsVc.maxCount = self.maxCount;
-    [self.navigationController pushViewController:assetsVc animated:YES];
+    [self.navigationController pushViewController:assetsVc animated:NO];
 }
 
 #pragma mark -<Images Datas>
@@ -185,7 +208,6 @@
 
     }
 }
-
 
 #pragma mark -<Navigation Actions>
 - (void) back{

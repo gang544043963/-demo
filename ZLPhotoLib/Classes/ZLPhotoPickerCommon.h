@@ -18,6 +18,16 @@ typedef NS_ENUM(NSUInteger, UIViewAnimationAnimationStatus) {
     UIViewAnimationAnimationStatusFade , // 淡入淡出
 };
 
+typedef enum {
+    kXGImagePicker = 0,  //相册图片选择
+    kXGAffairImagePicker, //文件相册图片选择
+    kXGBatchChatImagePicker, //群发相册图片选择
+    kXGChatImageShow,  //图片浏览
+    kXGChatFileImageShow,  //聊天中文件图片浏览
+    kXGFileImageShow,  //我的文件图片浏览
+    kXGAffairImageShow,  //事务图片浏览
+} XGShowImageType;
+
 // 图片最多显示9张，超过9张取消单击事件
 static NSInteger const KPhotoShowMaxCount = 9;
 

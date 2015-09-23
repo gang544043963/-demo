@@ -83,7 +83,7 @@
 @property (nonatomic , weak) id<ZLPhotoPickerBrowserViewControllerDelegate> delegate;
 
 // 展示的图片数组<ZLPhotoPickerBrowserPhoto> == [self.dataSource photoBrowser:photoAtIndexPath:]
-@property (strong,nonatomic) NSArray *photos;
+@property (copy,nonatomic) NSArray *photos;
 // 当前提供的组
 @property (strong,nonatomic) NSIndexPath *currentIndexPath;
 

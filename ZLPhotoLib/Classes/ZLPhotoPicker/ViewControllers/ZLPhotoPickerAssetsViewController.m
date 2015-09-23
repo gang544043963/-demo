@@ -43,10 +43,31 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
 @property (strong,nonatomic) NSMutableArray *takePhotoImages;
 // 1 - 相册浏览器的数据源是 selectAssets， 0 - 相册浏览器的数据源是 assets
 @property (nonatomic, assign) BOOL isPreview;
-
+//
 @end
 
 @implementation ZLPhotoPickerAssetsViewController
+
+#pragma mark - dealloc
+
+- (void)dealloc{
+    
+}
+- (void)viewDidDisappear:(BOOL)animated
+{
+    // 赋值给上一个控制器,以便记录上次选择的照片
+    if (self.selectedAssetsBlock) {
+        self.selectedAssetsBlock(self.selectAssets);
+    }
+}
+
+- (instancetype)initWithShowType:(XGShowImageType)showType{
+    self = [super init];
+    if (self) {
+        self.showType = showType;
+    }
+    return self;
+}
 
 #pragma mark - getter
 #pragma mark Get Data
@@ -99,8 +120,6 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
 
 - (void)previewBtnTouched
 {
-    NSLog(@"预览");
-    
     [self setupPhotoBrowserInCasePreview:YES CurrentIndexPath:0];
 }
 
@@ -130,7 +149,7 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
     // 展示控制器
     [pickerBrowser showPushPickerVc:self];
 //    [self.navigationController pushViewController:pickerBrowser animated:NO];
-//    [self presentViewController:pickerBrowser animated:NO completion:nil];
+//    [self presentViewController:pickerBrowser animated:YES completion:nil];
     
 }
 
@@ -238,10 +257,10 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
     
     self.view.bounds = [UIScreen mainScreen].bounds;
     self.view.backgroundColor = [UIColor whiteColor];
-    
+    // 获取相册
+    [self setupAssets];
     // 初始化按钮
     [self setupButtons];
-    
     // 初始化底部ToorBar
     [self setupToorBar];
 }
@@ -261,17 +280,19 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
     __block NSMutableArray *assetsM = [NSMutableArray array];
     __weak typeof(self) weakSelf = self;
     
-    [[ZLPhotoPickerDatas defaultPicker] getGroupPhotosWithGroup:self.assetsGroup finished:^(NSArray *assets) {
-        
-        [assets enumerateObjectsUsingBlock:^(ALAsset *asset, NSUInteger idx, BOOL *stop) {
-            ZLPhotoAssets *zlAsset = [[ZLPhotoAssets alloc] init];
-            zlAsset.asset = asset;
-            [assetsM addObject:zlAsset];
+    dispatch_async(dispatch_get_main_queue(), ^{
+
+        [[ZLPhotoPickerDatas defaultPicker] getGroupPhotosWithGroup:self.assetsGroup finished:^(NSArray *assets) {
+            
+            [assets enumerateObjectsUsingBlock:^(ALAsset *asset, NSUInteger idx, BOOL *stop) {
+                ZLPhotoAssets *zlAsset = [[ZLPhotoAssets alloc] init];
+                zlAsset.asset = asset;
+                [assetsM addObject:zlAsset];
+            }];
+            weakSelf.collectionView.dataArray = assetsM;
+            [self.assets setArray:assetsM];
         }];
-        weakSelf.collectionView.dataArray = assetsM;
-        [self.assets setArray:assetsM];
-    }];
-    
+    });
 }
 
 - (void)pickerCollectionViewDidCameraSelect:(ZLPhotoPickerCollectionView *)pickerCollectionView{
@@ -357,7 +378,7 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
     self.title = assetsGroup.groupName;
     
     // 获取Assets
-    [self setupAssets];
+//    [self setupAssets];
 }
 
 #pragma mark - ZLPhotoPickerCollectionViewDelegate
@@ -481,8 +502,11 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
     }
     // 包装下imageObj 成 ZLPhotoPickerBrowserPhoto 传给数据源
     ZLPhotoPickerBrowserPhoto *photo = [ZLPhotoPickerBrowserPhoto photoAnyImageObjWith:imageObj];
-    photo.toView = [[UIImageView alloc] initWithImage:[imageObj thumbImage]];
-//    photo.thumbImage = imageObj.thumbImage;
+    
+    ZLPhotoPickerCollectionViewCell *cell = (ZLPhotoPickerCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+    photo.toView = [[UIImageView alloc] initWithImage:cell.cellImage];
+    photo.thumbImage = cell.cellImage;
+    
     return photo;
 }
 
@@ -526,14 +550,6 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
         [[NSNotificationCenter defaultCenter] postNotificationName:PICKER_TAKE_DONE object:nil userInfo:@{@"selectAssets":self.selectAssets}];
     });
     [self dismissViewControllerAnimated:YES completion:nil];
-}
-
-
-- (void)dealloc{
-    // 赋值给上一个控制器
-    self.groupVc.selectAsstes = self.selectAssets;
-    self.assets = nil;
-    self.selectAssets = nil;
 }
 
 @end
