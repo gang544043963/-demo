@@ -151,7 +151,7 @@
     assetsVc.selectPickerAssets = self.selectAsstes;
     assetsVc.assetsGroup = gp;
     assetsVc.topShowPhotoPicker = self.topShowPhotoPicker;
-    assetsVc.groupVc = self;
+//    assetsVc.groupVc = self;
     assetsVc.maxCount = self.maxCount;
     [self.navigationController pushViewController:assetsVc animated:NO];
 }
@@ -166,7 +166,6 @@
     ZLPhotoPickerGroup *group = self.groups[indexPath.row];
     ZLPhotoPickerAssetsViewController *assetsVc = [[ZLPhotoPickerAssetsViewController alloc] init];
     assetsVc.selectPickerAssets = self.selectAsstes;
-    assetsVc.groupVc = self;
     assetsVc.assetsGroup = group;
     assetsVc.topShowPhotoPicker = self.topShowPhotoPicker;
     assetsVc.maxCount = self.maxCount;

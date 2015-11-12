@@ -145,8 +145,7 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
     // 是否可以删除照片
     pickerBrowser.editing = NO;
     // 当前选中的值
-    pickerBrowser.currentIndexPath = [NSIndexPath indexPathForRow:indexPath.row inSection:0];
-    // 展示控制器
+    pickerBrowser.currentIndexPath = indexPath;    // 展示控制器
     [pickerBrowser showPushPickerVc:self];
 //    [self.navigationController pushViewController:pickerBrowser animated:NO];
 //    [self presentViewController:pickerBrowser animated:YES completion:nil];

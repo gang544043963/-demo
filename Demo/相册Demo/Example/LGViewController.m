@@ -44,7 +44,7 @@
 #pragma mark - select Photo Library
 - (void)presentPhotoPickerViewController {
     // 创建控制器
-    ZLPhotoPickerViewController *pickerVc = [[ZLPhotoPickerViewController alloc] init];
+    ZLPhotoPickerViewController *pickerVc = [[ZLPhotoPickerViewController alloc] initWithShowType:kXGImagePicker];
     // 默认显示相册里面的内容SavePhotos
     pickerVc.status = PickerViewShowStatusCameraRoll;
     pickerVc.selectPickers = self.selectedAssets;
@@ -54,15 +54,12 @@
     [pickerVc showPickerVc:self];
 }
 
+
 #pragma mark - ZLPhotoPickerViewControllerDelegate
-- (void)pickerViewControllerDoneAsstes:(NSArray *)assets
+
+- (void)pickerViewControllerDoneAsstes:(NSArray *)assets isOriginal:(BOOL)original
 {
 
-}
-
-- (void)viewDidDisappear:(BOOL)animated
-{
-    
 }
 
 @end

@@ -74,6 +74,7 @@ static NSString *_cellIdentifier = @"collectionViewCell";
         
         [self.view addSubview:collectionView];
         self.collectionView = collectionView;
+        NSLog(@"%@",NSStringFromCGRect(self.collectionView.frame));
         
         _collectionView.translatesAutoresizingMaskIntoConstraints = NO;
         [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[_collectionView]-x-|" options:0 metrics:@{@"x":@(-ZLPickerColletionViewPadding)} views:@{@"_collectionView":_collectionView}]];
@@ -188,6 +189,9 @@ static NSString *_cellIdentifier = @"collectionViewCell";
     }else{
         if (self.currentPage >= 0) {
             self.collectionView.contentOffset = CGPointMake(self.currentPage * self.collectionView.width, self.collectionView.contentOffset.y);
+            
+            NSLog(@"%f---%d",self.currentPage * self.collectionView.width,self.currentPage);
+            
             if (self.currentPage == self.photos.count - 1 && self.photos.count > 1) {
                 dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(00.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                     self.collectionView.contentOffset = CGPointMake(self.currentPage * self.collectionView.width - ZLPickerColletionViewPadding, self.collectionView.contentOffset.y);
@@ -476,6 +480,7 @@ static NSString *_cellIdentifier = @"collectionViewCell";
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath{
     
+    NSLog(@"%d",indexPath.row);
     UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:_cellIdentifier forIndexPath:indexPath];
     
     if (collectionView.isDragging) {
