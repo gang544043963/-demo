@@ -1,12 +1,33 @@
-<mxfile host="app.diagrams.net" modified="2022-06-14T13:18:09.603Z" agent="5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.61 Safari/537.36" etag="D6JsWjoSCrjxB4EpcF_6" version="20.0.1" type="github">
+<mxfile host="app.diagrams.net" modified="2022-06-15T13:17:54.752Z" agent="5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.115 Safari/537.36" etag="LoFxRq1ywLGUYlJUaVR1" version="20.0.1" type="github">
   <diagram id="gYmAP6OWRyOsoMaoXrcU" name="Page-1">
-    <mxGraphModel dx="961" dy="557" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1298" dy="809" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <object label="&lt;font color=&quot;#ffffff&quot;&gt;&amp;lt;%type%&amp;gt;&lt;br&gt;%name%&lt;br&gt;%createdAt%&lt;br&gt;%expiredAt%&lt;br&gt;&lt;/font&gt;" placeholders="1" type="Fulfilment" name="Fulfilment Request" createdAt="created_at" expiredAt="expired_at" id="KN-xjKOZTdwPoZhbmizm-1">
+        <object label="&lt;font color=&quot;#ffffff&quot;&gt;&amp;lt;%type%&amp;gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;注册用户&lt;/b&gt;&lt;br&gt;&lt;/font&gt;" placeholders="1" type="party" name="Party" id="2CArAYmDTzIb8K_eICOh-2">
+          <mxCell style="rounded=1;whiteSpace=wrap;html=1;noLabel=0;comic=0;recursiveResize=1;fillColor=#FFA033;" vertex="1" parent="1">
+            <mxGeometry x="150" y="190" width="110" height="60" as="geometry" />
+          </mxCell>
+        </object>
+        <object label="&lt;font color=&quot;#ffffff&quot;&gt;&amp;lt;%type%&amp;gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;房产经纪人&lt;/b&gt;&lt;br&gt;&lt;/font&gt;" placeholders="1" type="party" name="Party" id="2CArAYmDTzIb8K_eICOh-3">
+          <mxCell style="rounded=1;whiteSpace=wrap;html=1;noLabel=0;comic=0;recursiveResize=1;fillColor=#00994D;" vertex="1" parent="1">
+            <mxGeometry x="150" y="60" width="110" height="60" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="2CArAYmDTzIb8K_eICOh-4" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;endArrow=block;endFill=0;dashed=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="2CArAYmDTzIb8K_eICOh-3" target="2CArAYmDTzIb8K_eICOh-2">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="280" y="140" as="sourcePoint" />
+            <mxPoint x="350" y="140" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <object label="&lt;font color=&quot;#ffffff&quot;&gt;&amp;lt;%type%&amp;gt;&lt;br&gt;CPC 点击收费方式&lt;br&gt;%createdAt%&lt;br&gt;&lt;/font&gt;" placeholders="1" type="Proposal" name="Name of the Proposal" createdAt="created_at" id="2CArAYmDTzIb8K_eICOh-5">
           <mxCell style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FF66B3;noLabel=0;comic=0;recursiveResize=1;" vertex="1" parent="1">
-            <mxGeometry x="230" y="240" width="170" height="100" as="geometry" />
+            <mxGeometry x="340" y="170" width="170" height="100" as="geometry" />
+          </mxCell>
+        </object>
+        <object label="&lt;font color=&quot;#ffffff&quot;&gt;&amp;lt;%type%&amp;gt;&lt;br&gt;信息推广服务&lt;br&gt;%createdAt%&lt;br&gt;&lt;/font&gt;" placeholders="1" type="Contract" name="Name of the Contract" createdAt="created_at" id="2CArAYmDTzIb8K_eICOh-6">
+          <mxCell style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FF66B3;noLabel=0;comic=0;recursiveResize=1;" vertex="1" parent="1">
+            <mxGeometry x="340" y="340" width="170" height="100" as="geometry" />
           </mxCell>
         </object>
       </root>
